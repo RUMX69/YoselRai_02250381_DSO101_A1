@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Todo App</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4ff;
+      display: flex;
+      justify-content: center;
+      padding: 50px 20px;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    h1 { color: #4f46e5; margin-bottom: 20px; }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+    }
+
+    button {
+      padding: 10px 16px;
+      background: #4f46e5;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button:hover { background: #4338ca; }
+
+    ul { list-style: none; }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f9fafb;
+      padding: 12px;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .task-title { cursor: pointer; font-size: 15px; flex: 1; }
+    .task-title.done { text-decoration: line-through; color: #aaa; }
+
+    .delete-btn {
+      background: #ef4444;
+      padding: 6px 10px;
+      font-size: 12px;
+      margin-left: 10px;
+    }
+
+    .delete-btn:hover { background: #dc2626; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📝 My Todo List</h1>
+
+    <div class="input-row">
+      <input id="taskInput" placeholder="What do you need to do?" />
+      <button onclick="addTask()">Add</button>
+    </div>
+
+    <ul id="taskList"></ul>
+  </div>
+
+  <script>
+    // This is your backend's address
+    const API = 'https://be-todo-sbse.onrender.com';
+
+    // Load all tasks when page opens
+    async function loadTasks() {
+      const res = await fetch(`${API}/tasks`);
+      const tasks = await res.json();
+
+      const list = document.getElementById('taskList');
+      list.innerHTML = ''; // clear the list first
+
+      tasks.forEach(task => {
+        list.innerHTML += `
+          <li>
+            <span 
+              class="task-title ${task.done ? 'done' : ''}" 
+              onclick="toggleTask(${task.id}, ${!task.done})"
+              title="Click to mark done">
+              ${task.title}
+            </span>
+            <button class="delete-btn" onclick="deleteTask(${task.id})">Delete</button>
+          </li>
+        `;
+      });
+    }
+
+    // Add a new task
+    async function addTask() {
+      const input = document.getElementById('taskInput');
+      const title = input.value.trim();
+
+      if (!title) return alert('Please type a task first!');
+
+      await fetch(`${API}/tasks`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title })
+      });
+
+      input.value = ''; // clear the input box
+      loadTasks();      // refresh the list
+    }
+
+    // Mark task as done / undone
+    async function toggleTask(id, done) {
+      await fetch(`${API}/tasks/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ done })
+      });
+      loadTasks();
+    }
+
+    // Delete a task
+    async function deleteTask(id) {
+      await fetch(`${API}/tasks/${id}`, { method: 'DELETE' });
+      loadTasks();
+    }
+
+    // Run when page loads
+    loadTasks();
+  </script>
+</body>
+</html>
