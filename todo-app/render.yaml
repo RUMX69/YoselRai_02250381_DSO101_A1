@@ -13,4 +13,4 @@ services:
     dockerfilePath: ./frontend/Dockerfile
     envVars:
       - key: REACT_APP_API_URL
-        value: https://be-todo-sbse.onrender.com
+        value: https://yoselrai-02250381-dso101-a1.onrender.com
