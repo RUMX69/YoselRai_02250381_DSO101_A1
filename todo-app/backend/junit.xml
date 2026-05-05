@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="4" failures="0" errors="0" time="1.905">
+  <testsuite name="Todo API" errors="0" failures="0" skipped="0" timestamp="2026-05-05T15:03:08" time="1.734" tests="4">
+    <testcase classname="Todo API GET /tasks returns an array" name="Todo API GET /tasks returns an array" time="0.06">
+    </testcase>
+    <testcase classname="Todo API POST /tasks creates a task" name="Todo API POST /tasks creates a task" time="0.081">
+    </testcase>
+    <testcase classname="Todo API PUT /tasks/:id updates a task" name="Todo API PUT /tasks/:id updates a task" time="0.008">
+    </testcase>
+    <testcase classname="Todo API DELETE /tasks/:id deletes a task" name="Todo API DELETE /tasks/:id deletes a task" time="0.008">
+    </testcase>
+  </testsuite>
+</testsuites>

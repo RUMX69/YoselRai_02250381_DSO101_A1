@@ -1,0 +1,80 @@
+pipeline {
+    agent any
+
+    tools {
+        nodejs 'NodeJS'  // Must match the name you set in Jenkins > Tools > NodeJS
+    }
+
+    environment {
+        DOCKERHUB_USERNAME = 'your-dockerhub-username'   // ← change this
+        IMAGE_NAME = "${DOCKERHUB_USERNAME}/todo-backend"
+    }
+
+    stages {
+
+        // Stage 1: Pull the code from GitHub
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    credentialsId: 'github-pat',          // ← match the ID you set in Jenkins credentials
+                    url: 'https://github.com/RUMX69/YoselRai_02250381_DSO101_A1.git'
+            }
+        }
+
+        // Stage 2: Install npm dependencies
+        stage('Install Dependencies') {
+            steps {
+                dir('backend') {   // go into the backend folder
+                    sh 'npm install'
+                }
+            }
+        }
+
+        // Stage 3: No TypeScript/React build needed — plain Node.js
+        stage('Build') {
+            steps {
+                dir('backend') {
+                    sh 'npm run build'
+                }
+            }
+        }
+
+        // Stage 4: Run Jest tests and collect JUnit XML report
+        stage('Test') {
+            steps {
+                dir('backend') {
+                    sh 'npm test'
+                }
+            }
+            post {
+                always {
+                    // Publish test results in Jenkins UI
+                    junit 'backend/junit.xml'
+                }
+            }
+        }
+
+        // Stage 5: Build and push Docker image  (optional — remove if not doing Docker)
+        stage('Deploy - Docker') {
+            steps {
+                dir('backend') {
+                    script {
+                        def image = docker.build("${IMAGE_NAME}:latest")
+                        docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-creds') {
+                            image.push()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Pipeline completed successfully!'
+        }
+        failure {
+            echo '❌ Pipeline failed. Check the logs above.'
+        }
+    }
+}
