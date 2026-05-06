@@ -5,11 +5,6 @@ pipeline {
         nodejs 'NodeJS'
     }
 
-    environment {
-        DOCKERHUB_USERNAME = 'yoselrai'
-        IMAGE_NAME = "${DOCKERHUB_USERNAME}/todo-backend"
-    }
-
     stages {
 
         stage('Checkout') {
@@ -45,19 +40,6 @@ pipeline {
             post {
                 always {
                     junit 'todo-app/backend/junit.xml'
-                }
-            }
-        }
-
-        stage('Deploy - Docker') {
-            steps {
-                dir('todo-app/backend') {
-                    script {
-                        def image = docker.build("${IMAGE_NAME}:latest")
-                        docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-creds') {
-                            image.push()
-                        }
-                    }
                 }
             }
         }
