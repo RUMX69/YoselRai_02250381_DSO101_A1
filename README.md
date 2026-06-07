@@ -154,14 +154,6 @@ docker push yoselrai/fe-todo:02250381
 - 🐳 Backend: https://hub.docker.com/r/yoselrai/be-todo
 - 🐳 Frontend: https://hub.docker.com/r/yoselrai/fe-todo
 
-### Screenshot – Docker Hub Images Pushed
-
-> 📸 *[Screenshot: Docker Hub showing be-todo and fe-todo images with tag 02250381]*
-
-### Screenshot – Render.com Deployment
-
-> 📸 *[Screenshot: Render dashboard showing both services running]*
-
 ---
 
 ## Part B – Automated Build and Deployment (GitHub Actions)
